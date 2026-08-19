@@ -2,7 +2,7 @@ import numpy as np
 from itertools import product
 from pathlib import Path
 
-RNG = np.random.rng()
+RNG = np.random.default_rng()
 
 def sample_gauss_lv(N, M_sigma = 1, r_sigma = 1):
 	# M = np.zeroes(size=(N,N))

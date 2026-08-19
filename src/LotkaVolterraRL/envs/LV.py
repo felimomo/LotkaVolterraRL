@@ -30,7 +30,7 @@ class LotkaVolterraEnv(gym.Env):
 		)
 	#
 	def reset(self, *, , seed=42, options=None):
-		self.rng = np.RandomNumberGenerator()
+		self.rng = np.random.default_rng()
 		self.pop = self.init_pop * (
 			1 + self.init_sig * self.rng.normal()
 		)
