@@ -42,3 +42,5 @@ def main():
 				r_and_M
 			)
 
+if __name__ == "__main__":
+	main()
