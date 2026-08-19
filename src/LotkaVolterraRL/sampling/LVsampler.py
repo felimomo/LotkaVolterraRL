@@ -29,7 +29,7 @@ def main():
 			.parent # sampling
 			.parent # LotkaVolterraRL
 			.parent # src
-			.parent # LV
+			.parent # repo main dir
 		/ 'samples' 
 	)
 	#
