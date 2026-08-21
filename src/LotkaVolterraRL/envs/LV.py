@@ -6,7 +6,7 @@ class LotkaVolterraEnv(gym.Env):
 		self.M = parameters.get('M')
 		self.r = parameters.get('r')
 		self.N = len(self.r)
-		self.K = parameters
+		self.K = parameters.get('K', np.ones(self.N))
 		self.sigma = parameters.get('sigma')
 		#
 		self.fished = parameters.get('fished', [0])
@@ -52,11 +52,8 @@ class LotkaVolterraEnv(gym.Env):
 	def nat_dyn_step(self, curr_pop: np.ndarray):
 		return (
 			curr_pop + 
-			(
-				self.r * curr_pop + 
-				(
-					self.M @ curr_pop * curr_pop
-				) 
+			curr_pop * (
+				self.r + self.M @ curr_pop - curr_pop * / self.K
 			) *
 			(
 				1 + self.sigma * self.rng.normal(size=self.n)

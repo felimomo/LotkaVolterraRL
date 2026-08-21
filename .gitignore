@@ -1,6 +1,7 @@
 # self added
 *DS_Store
 samples/*
+sim_data/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
