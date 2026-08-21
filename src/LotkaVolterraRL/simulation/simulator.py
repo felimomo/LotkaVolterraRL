@@ -3,7 +3,7 @@ import pandas as pd
 
 from LotkaVolterraRL import LotkaVolterraEnv
 
-DEFAULT_SAVE = = (
+DEFAULT_SAVE = (
 		Path(__file__).resolve()
 			.parent # simulation
 			.parent # LotkaVolterraRL
@@ -73,7 +73,7 @@ def main():
 	parser.add_argument(
 		'-s', '--save-file',
 		help='Name of the csv to save the data in.',
-		default=DEFAULT_SAVE
+		default=DEFAULT_SAVE/'sim_data.csv'
 	)
 	args = parser.parse_args()
 	#
