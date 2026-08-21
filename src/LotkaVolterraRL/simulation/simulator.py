@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from pathlib import Path
 
 from LotkaVolterraRL import LotkaVolterraEnv
 
@@ -84,5 +85,6 @@ def main():
 	data_df = Simulator.SimulateTimeseries()
 	data_df.to_csv(args.save_file)
 
-
+if __name__ == '__main__':
+	main()
 

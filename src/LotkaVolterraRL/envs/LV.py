@@ -3,11 +3,11 @@ import numpy as np
 
 class LotkaVolterraEnv(gym.Env):
 	def __init__(self, parameters):
-		self.M = parameters.get('M')
-		self.r = parameters.get('r')
+		self.M = parameters.get('M', np.array([[0]]))
+		self.r = parameters.get('r', np.ones(1))
 		self.N = len(self.r)
 		self.K = parameters.get('K', np.ones(self.N))
-		self.sigma = parameters.get('sigma')
+		self.sigma = parameters.get('sigma', 0.1)
 		#
 		self.fished = parameters.get('fished', [0])
 		self.observed = parameters.get('observed', [0])
@@ -16,20 +16,20 @@ class LotkaVolterraEnv(gym.Env):
 		self.harv_exp = parameters.get('harvest_exp', 1)
 		#
 		self.bound = parameters.get('bound', 1)
-		self.init_pop = parameters.get('init_pop', np.ones(self.N))
+		self.init_pop = parameters.get('init_pop', 0.1 * np.ones(self.N))
 		self.init_sig = parameters.get('init_sig', 0.3)
-		self.maxT = paramters.get('maxT', 100)
+		self.maxT = parameters.get('maxT', 100)
 		#
 		self.action_space = gym.spaces.Box(
-			[-1] * len(self.fished),
-			[ 1] * len(self.fished)
+			np.array([-1] * len(self.fished)),
+			np.array([ 1] * len(self.fished)),
 		)
 		self.observation_space = gym.spaces.Box(
-			[-1] * len(self.observed),
-			[ 1] * len(self.observed)
+			np.array([-1] * len(self.observed)),
+			np.array([ 1] * len(self.observed)),
 		)
 	#
-	def reset(self, *, , seed=42, options=None):
+	def reset(self, *, seed=42, options=None):
 		self.rng = np.random.default_rng()
 		self.pop = self.init_pop * (
 			1 + self.init_sig * self.rng.normal()
@@ -39,9 +39,8 @@ class LotkaVolterraEnv(gym.Env):
 	
 	def step(self, action):
 		self.pop = self.nat_dyn_step(self.pop)
-		reward = self.reward(
-			self.get_harvest(action, self.pop)
-		)
+		harvest = self.get_harvest(action, self.pop)
+		reward = self.reward(harvest)
 		self.pop[self.fished] -= harvest
 		#
 		self.t += 1
@@ -53,18 +52,20 @@ class LotkaVolterraEnv(gym.Env):
 		return (
 			curr_pop + 
 			curr_pop * (
-				self.r + self.M @ curr_pop - curr_pop * / self.K
+				self.r + self.M @ curr_pop - curr_pop / self.K
 			) *
 			(
-				1 + self.sigma * self.rng.normal(size=self.n)
+				1 + self.sigma * self.rng.normal(size=self.N)
 			)
 		)
 
 	def get_obs(self, pop: np.ndarray):
 		return np.clip(
-			(1 + self.obs_sigma * self.rng.normal()) * 
-			(pop[self.observed] + 1) / 
-			(2 * self.bound),
+		 	(
+				(pop[self.observed] + 1) / 
+				(2 * self.bound) * 
+				(1 + self.obs_sigma * self.rng.normal(size=len(self.observed)))
+			),
 			-1,
 			1,
 		)
@@ -79,4 +80,4 @@ class LotkaVolterraEnv(gym.Env):
 		return harv_mortality * pop[self.fished]
 
 	def reward(self, harvest):
-		return np.sum(harvest ** self.harvest_exp)
+		return np.sum(harvest ** self.harv_exp)
